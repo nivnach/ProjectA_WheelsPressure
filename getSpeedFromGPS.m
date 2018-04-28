@@ -13,9 +13,10 @@ data_2(:,1) = data(linesNum,1);
 for i=1:length(linesNum)
      line = cell2mat(linesIdxPos(linesNum(i)));
      gps_line = string(data_2(i,1));
-     %need to get all gps data, check every time if in the next 28 chars
-     %we have a soh, maybe by doing str2hex and check if it returns NaN.
      start_pos = length(gps_delimiter) + line(1);
+     if (strlength(gps_line) < start_pos+gpsDataLength - 1)
+         continue;
+     end
      gps_part = extractBetween(gps_line,start_pos,start_pos+gpsDataLength-1);
      b = isstrprop(gps_part, 'xdigit');
      if (b == b1)

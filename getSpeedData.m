@@ -1,4 +1,5 @@
 function [timeStampData,speed_data] = getSpeedData(data)
+soh_delimiter = '\s';
 start_text = 'MWSTRM ';
 speed_delimiter = '1002a';
 delimiter_len = length(speed_delimiter);
@@ -15,6 +16,7 @@ for i=1:length(linesNum)
    for j=1:length(temp_cell{1,1})
       start_pos = line(j)+delimiter_len;
       speed_part_ = extractBetween(speed_part,start_pos,start_pos+speed_data_len-1);
+      speed_part_2 = regexp(speed_part, '\s*1002a(\w+)\s*','match');
       speed_data(idx) = speed_part_;
       idx = idx + 1;
    end

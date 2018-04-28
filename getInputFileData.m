@@ -5,7 +5,7 @@ copyfile(filePath,newFilePath);
 
 % put the entire text in data:
 fileData = importdata(fileName);
-if(class(fileData) ~= 'cell')
+if(~iscell(fileData))
     fileData = fileData.textdata;
 end
 

@@ -13,10 +13,13 @@ Data_Start_Indicator = 'Start DATA';
 startIndex = find(contains(fileData,Data_Start_Indicator));
 fileData = fileData(startIndex+1:end);
 %% get speed raw data
-[speed_timeStampRawData,SpeedRawData] = getSpeedData(fileData);
+%[speed_timeStampRawData,SpeedRawData] = getSpeedData(fileData);
+%% get speed raw data with regex
+[speed_timeStampRawData,SpeedRawData] = getSpeedData_regex(fileData);
 %% analyze speed data and get every wheel real speed
+%tic
 [SpeedData_RR,SpeedData_LR,SpeedData_RF,SpeedData_LF] = analyzeSpeedData(SpeedRawData);
-
+%toc
 %% analyze time stamp of the speed data:
 %[timeStampInSeconds] = getTimeInSeconds(speed_timeStampRawData);
 %% show speed on graph:
@@ -30,6 +33,18 @@ plot(t,SpeedData_RR,'black');
 legend('Left Front','Right Front','Left Rear','Right Rear');
 hold off;
 
+%% Get speeds data without turns:
+threshold_in_kmh = 1.9;
+[RR_noTurns, LR_noTurns, RF_noTurns, LF_noTurns] = removeTurns(SpeedData_RR,SpeedData_LR,SpeedData_RF,SpeedData_LF, threshold_in_kmh);
+%% plot the speeds data without turns:
+figure;
+plot(RR_noTurns,'blue');hold on;
+plot(RF_noTurns,'green');
+plot(LR_noTurns,'red');
+plot(LF_noTurns,'black');
+hold off;
+legend('Right Rear','Right Front','Left Rear','Left Front');
+
 %% get speed from gps pos:
 [gpsSpeedData] = getSpeedFromGPS(fileData);
 
@@ -37,5 +52,48 @@ hold off;
 t_gps = 0:0.01:(length(gpsSpeedData)-1)*0.01;
 figure();
 plot(t_gps,gpsSpeedData,'blue');
+
+%% get speed from gps with 4001 not 10033:
+[gpsSpeedData_V2] = getSpeedFromGPS_V2(fileData);
+t_gps_V2 = 0:0.01:(length(gpsSpeedData_V2)-1)*0.01;
+figure();
+plot(t_gps_V2,gpsSpeedData_V2,'red');
+
+%% 10033 on 4001 graphs:
+figure;
+plot(t_gps,gpsSpeedData,'blue');hold on;
+plot(t_gps_V2,gpsSpeedData_V2,'red');
+legend('from 10033 samples','from 4001&4002 samples');
+title('GPS Speed from lon&lat samples');
+hold off;
+%% trying to do the FFT algorithem:
+FFT_LF = fft(SpeedData_LF);
+FFT_RF = fft(SpeedData_RF);
+FFT_RR = fft(SpeedData_RR);
+FFT_LR = fft(SpeedData_LR);
+Fs=1/(t(2)-t(1)); %sampling freq
+Ts = 1/Fs;
+f =linspace(-Fs/2,Fs/2,length(FFT_LF));
+% figure;
+% plot(f,FFT_LF);
+% title('LF Speed FFT');
+fft_peak_LF = max(FFT_LF)
+fft_peak_RF = max(FFT_RF)
+fft_peak_RR = max(FFT_RR)
+fft_peak_LR = max(FFT_LR)
+% figure;
+% plot(t,IFFT_LF);
+% title('LF Speed IFFT');
+IFFT_LF = ifft(FFT_LF);
+IFFT_RF = ifft(FFT_RF);
+IFFT_RR = ifft(FFT_RR);
+IFFT_LR = ifft(FFT_LR);
+
+ifft_peak_LF = max(IFFT_LF)
+ifft_peak_RF = max(IFFT_RF)
+ifft_peak_RR = max(IFFT_RR)
+ifft_peak_LR = max(IFFT_LR)
+
+
 %% finish
 toc
