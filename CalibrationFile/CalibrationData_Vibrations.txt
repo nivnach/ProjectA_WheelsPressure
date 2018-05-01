@@ -1,0 +1,4 @@
+LF FFT peak: 9.092949e+06
+RF FFT peak: 9.122019e+06
+LR FFT peak: 7.912195e+06
+RR FFT peak: 7.430899e+06
