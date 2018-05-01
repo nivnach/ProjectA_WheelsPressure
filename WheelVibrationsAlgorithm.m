@@ -1,4 +1,4 @@
-function [decision] = WheelVibrationsAlgorithm(RR_AP,RF_AP,LR_AP, LF_AP,isCalibration)
+function [RR_decision,RF_decision,LR_decision,LF_decision] = WheelVibrationsAlgorithm(RR_AP,RF_AP,LR_AP, LF_AP,isCalibration)
 %% if len is not power of 2, add zeros at the end:
 RR_AP = paddingWithZeros(RR_AP);
 % RR_AP_Len = length(RR_AP);
@@ -20,7 +20,11 @@ LR_Peak = max(FFT_LR_AP);
 LF_Peak = max(FFT_LF_AP);
 
 %% handle peaks:
-  calibrationFileName = 'CalibrationFile/CalibrationData_Vibrations.txt';
+LF_decision = -1;
+LR_decision= -1;
+RR_decision = -1;
+RF_decision = -1;
+calibrationFileName = 'CalibrationFile/CalibrationData_Vibrations.txt';
 if isCalibration == 1
     % save the data in the calibration text file and finish
     fileID = fopen(calibrationFileName,'w');
@@ -29,7 +33,6 @@ if isCalibration == 1
     fprintf(fileID,'LR FFT peak: %5d\n',LR_Peak);
     fprintf(fileID,'RR FFT peak: %5d\n',RR_Peak);
     fclose(fileID);
-    decision = -1;
 else
 %     read data from calibration file and compare to our results:
       fileID = fopen(calibrationFileName,'r');
@@ -42,7 +45,26 @@ else
       end     
      fclose(fileID);
      %make the decision according to our IRS
-     decision = 1;
+     if LF_Peak > peaks(1)
+         LF_decision = 1;
+     else
+         LF_decision = 0;
+     end
+       if RF_Peak > peaks(2)
+         RF_decision = 1;
+     else
+         RF_decision = 0;
+       end
+       if LR_Peak > peaks(3)
+         LR_decision = 1;
+     else
+         LR_decision = 0;
+     end
+     if RR_Peak > peaks(4)
+         RR_decision = 1;
+     else
+         RR_decision = 0;
+     end
 end
 
 end

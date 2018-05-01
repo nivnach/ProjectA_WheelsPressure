@@ -1,4 +1,5 @@
 %% start fresh:
+tic
 clear all; clc;
 %% Calibration Run or Test Run ?
 isCalibration = 0;
@@ -39,4 +40,11 @@ RF_AP = RF_noStanding;
 LR_AP = LR_noStanding;
 LF_AP = LF_noStanding;
 %% Wheel Vibrations Algorithm:
-[vibrations_decision] = WheelVibrationsAlgorithm(RR_AP,RF_AP,LR_AP,LF_AP,isCalibration);
+[RR_decision_v,RF_decision_v,LR_decision_v,LF_decision_v] = WheelVibrationsAlgorithm(RR_AP,RF_AP,LR_AP,LF_AP,isCalibration);
+%% 
+RR_decision_v
+RF_decision_v
+LR_decision_v
+LF_decision_v
+%% finish
+toc
