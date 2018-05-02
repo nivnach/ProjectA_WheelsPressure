@@ -1,4 +1,4 @@
-function [RR_decision,RF_decision,LR_decision,LF_decision] = WheelVibrationsAlgorithm(RR_AP,RF_AP,LR_AP, LF_AP,isCalibration)
+function [RR_decision,RF_decision,LR_decision,LF_decision] = WheelVibrationsAlgorithm(RR_AP,RF_AP,LR_AP, LF_AP,isCalibration,fileName)
 %% if len is not power of 2, add zeros at the end:
 RR_AP = paddingWithZeros(RR_AP);
 % RR_AP_Len = length(RR_AP);
@@ -65,6 +65,20 @@ else
      else
          RR_decision = 0;
      end
+     %% For Testing easier:
+     if exist('Tests_Results','dir') ~= 7
+        mkdir Tests_Results; 
+     end
+     fileNameSplit = strsplit(fileName,'_');
+     resultsFileName = strcat('Tests_Results\' ,string(fileNameSplit(end)));
+     fid_results = fopen(resultsFileName,'w');
+     fprintf(fid_results,'Peak Data for Input file number %s\n',string(fileNameSplit(end)));
+     fprintf(fid_results,'LF FFT peak: %5d\n',LF_Peak);
+     fprintf(fid_results,'RF FFT peak: %5d\n',RF_Peak);
+     fprintf(fid_results,'LR FFT peak: %5d\n',LR_Peak);
+     fprintf(fid_results,'RR FFT peak: %5d\n',RR_Peak);
+     fclose(fid_results);
+     %% 
 end
 
 end
